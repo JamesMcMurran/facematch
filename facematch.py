@@ -115,7 +115,7 @@ class FaceOff:
 
 
 def exit_gracefully(_signal, _frame):
-    print('\rGoodbye!')
+    #print('\rGoodbye!')
     exit()
 
 
