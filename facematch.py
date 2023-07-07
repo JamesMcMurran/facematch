@@ -9,6 +9,7 @@ import signal
 import sys
 import time
 import concurrent.futures
+from tqdm import tqdm
 
 
 class FaceOff:
@@ -59,12 +60,12 @@ class FaceOff:
         self.face_counter = len(self.processed_face_encodings)
 
     def process_image(self, file):
-        print(f'Started processing {file}...')
+        #print(f'Started processing {file}...')
         try:
             image = fr.load_image_file(file)
             face_locations = fr.face_locations(image, number_of_times_to_upsample=0, model='cnn')
             face_encodings = fr.face_encodings(image, face_locations)
-            print(f'Processed {file}...')
+            #print(f'Processed {file}...')
             return file, face_encodings
 
         except Exception as err:
@@ -83,7 +84,9 @@ class FaceOff:
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
             print('Running jobs...')
-            results = executor.map(self.process_image, self.image_files)
+            results = tqdm(executor.map(self.process_image, self.image_files), total=len(self.image_files))
+
+
         
             face_to_compare = fr.load_image_file(self.face_file)
             face_to_compare_encoding = fr.face_encodings(face_to_compare)[0]
