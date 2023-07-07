@@ -93,10 +93,8 @@ class FaceOff:
             face_to_compare_encoding = fr.face_encodings(face_to_compare)[0]
         
             for file, face_encodings in results:
-                if len(face_encodings) != 1 and not self.ignore:
-                    if not os.path.exists(os.path.join(self.target_directory, 'no_face_found')):
-                        os.mkdir(os.path.join(self.target_directory, 'no_face_found'))
-                    shutil.copyfile(file, os.path.join(self.target_directory, 'no_face_found', os.path.basename(file)))
+                if len(face_encodings) != 1 and self.ignore:
+                    continue
                 else:
                     for face_encoding in face_encodings:
                         distance = fr.face_distance([face_to_compare_encoding], face_encoding)[0]
