@@ -84,10 +84,10 @@ class FaceOff:
         with concurrent.futures.ProcessPoolExecutor() as executor:
             print('Running jobs...')
             results = executor.map(self.process_image, self.image_files)
-  
+        
             face_to_compare = fr.load_image_file(self.face_file)
             face_to_compare_encoding = fr.face_encodings(face_to_compare)[0]
-          
+        
             for file, face_encodings in results:
                 if len(face_encodings) == 0 and not self.ignore:
                     if not os.path.exists(os.path.join(self.target_directory, 'no_face_found')):
@@ -95,17 +95,20 @@ class FaceOff:
                     shutil.copyfile(file, os.path.join(self.target_directory, 'no_face_found', os.path.basename(file)))
                 else:
                     for face_encoding in face_encodings:
-                        distance = int(fr.face_distance([face_to_compare_encoding], face_encoding)[0])*1000000
-                        distance_str = f'{distance}'
-                        print(distance_str)
-                        shutil.copyfile(file, os.path.join(self.target_directory, face_id, os.path.basename(distance_str+file)))
-                      
+                        distance = int(fr.face_distance([face_to_compare_encoding], face_encoding)[0] * 1000000)
+                        distance_str = str(distance)
+                        filename, extension = os.path.splitext(os.path.basename(file))
+                        new_filename = distance_str + '_' + filename + extension
+                        shutil.copyfile(file, os.path.join(self.target_directory, new_filename))
+
+        
         if not self.alone:
             with open('face_encodings.pkl', 'wb') as output_file:
                 pickle.dump(self.processed_face_encodings, output_file, pickle.HIGHEST_PROTOCOL)
-
+        
             with open('face_directories.pkl', 'wb') as output_file:
                 pickle.dump(self.processed_face_directories, output_file, pickle.HIGHEST_PROTOCOL)
+
 
 
 def exit_gracefully(_signal, _frame):
