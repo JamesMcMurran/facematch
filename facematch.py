@@ -93,7 +93,7 @@ class FaceOff:
             face_to_compare_encoding = fr.face_encodings(face_to_compare)[0]
         
             for file, face_encodings in results:
-                if len(face_encodings) == 0 and not self.ignore:
+                if len(face_encodings) != 1 and not self.ignore:
                     if not os.path.exists(os.path.join(self.target_directory, 'no_face_found')):
                         os.mkdir(os.path.join(self.target_directory, 'no_face_found'))
                     shutil.copyfile(file, os.path.join(self.target_directory, 'no_face_found', os.path.basename(file)))
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     parser.add_argument('--recursive', default=False, action='store_true', help='Enable recursive processing of '
                                                                                 'sub-directories of the source')
     parser.add_argument('--ignore', default=False, action='store_true', help='Do not copy images where no faces have '
-                                                                             'been detected')
+                        'been detected or where more than one have been detected.')
     parser.add_argument('--alone', default=False, action='store_true', help='Do not remember this work for future '
                                                                             'runs and do not load prior runs.')
     parser.add_argument('--face', required=True, help='Face file')
