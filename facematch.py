@@ -32,6 +32,7 @@ class FaceOff:
             print('ERROR: source directory must contain image files')
             sys.exit(1)
 
+        self.ignore_over = _options.ignoreOver
         self.ignore = _options.ignore
         self.alone = _options.alone
 
@@ -98,8 +99,10 @@ class FaceOff:
                     shutil.copyfile(file, os.path.join(self.target_directory, 'no_face_found', os.path.basename(file)))
                 else:
                     for face_encoding in face_encodings:
-                        distance = int(fr.face_distance([face_to_compare_encoding], face_encoding)[0] * 1000000)
-                        distance_str = str(distance)
+                        distance = fr.face_distance([face_to_compare_encoding], face_encoding)[0]
+                        if self.ignore_over and distance > self.ignore_over:
+                            continue
+                        distance_str = str(int(distance * 1000000))
                         filename, extension = os.path.splitext(os.path.basename(file))
                         new_filename = distance_str + '_' + filename + extension
                         shutil.copyfile(file, os.path.join(self.target_directory, new_filename))
@@ -140,6 +143,8 @@ if __name__ == '__main__':
     parser.add_argument('--alone', default=False, action='store_true', help='Do not remember this work for future '
                                                                             'runs and do not load prior runs.')
     parser.add_argument('--face', required=True, help='Face file')
+    parser.add_argument('--ignoreOver', type=float, help='Ignore images with a distance greater than the given value.'
+                        ' More than 0.6 is normaly a non match. That that is a good starting point. Lower it to get a tighter grouping.')
     options = parser.parse_args()
 
     if not (options.source and options.target):
