@@ -1,3 +1,13 @@
+# facerank
+Quick and dirty image sorter by faces.
+python3 faceoff.py source/directory/ target/directory/ [--recursive] [--ignore] [--alone][--ignoreOver][--face]
+
+--face - The face you want to rank.
+--ignoreOver - it will ignore images over this diff value. Helps filter out junk.
+--ignore - This will ignore images with no Face or ones with more than one faces. Helps filter out junk.
+
+``` python3 facerank.py --face ./in/Me.jpg --source ./stable-diffusion-webui/outputs/txt2img-images/2023-07-07 --target ./input/Me1/ --ignore --alone --ignoreOver 0.55 ```
+
 # faceoff
 Quick and dirty image sorter by faces.
 The script will attempt to sort images by face and create a sub-directory with the face ID as directory name.
